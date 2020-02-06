@@ -31,8 +31,8 @@ warning('off', 'Images:initSize:adjustingMag');
 % Loop through shell images
 model = [];
 modelbands = [];
-startNumber = 4;
-lastNumber = 9;%nSnails;
+startNumber = 11;
+lastNumber = 11;%nSnails;
 
 tic
 for snailNumber = startNumber:lastNumber
@@ -233,9 +233,9 @@ apAngle = eccent(:,2);
 apex = apexpoints;
 %%
 
-results = table(photoID, gw, gh, r0,h0,a0,bandAngles,...
+results = table(photoID, gw, gh, r0,h0,a0,bandA,...
     shellLength, apex, scaleFactor);
-results = splitvars(results,'bandAngles');
+results = splitvars(results,'bandA');
 
 for i = 1:maxBands
     results.Properties.VariableNames{6+2*i-1} = char(strcat('band',string(i),'start'));
