@@ -216,13 +216,15 @@ aperturePositionRadial = startV(:,1);
 aperturePositionHeight = startV(:,2);
 apertureSize = startV(:,3);
 scaleFactor = scaleF;
+apertureSuture = apertureA(:,1);
+apertureColumnella = apertureA(:,2);
 %eccentricity = eccent(:,1);
 %apAngle = eccent(:,2);
 apexPos = apexpoints;
 %%
 
 results = table(photoID, widthGrowth, heightGrowth, aperturePositionRadial,...
-    aperturePositionHeight,apertureSize,apertureA,bandA,...
+    aperturePositionHeight,apertureSize,bandA,apertureSuture,apertureColumnella,...
     shellLength, apexPos, scaleFactor);
 results = splitvars(results,'bandA');
 
