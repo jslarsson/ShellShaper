@@ -49,8 +49,8 @@ ez2 = zPart(unitBinormal(spiral));
 
 
 % Generating the aperture shape function
-%apShape = flip(circlipse(a,b,c,s,theta));
-apShape = ones(1,length(s));
+apShape = circlipseF(a,b,c,s,theta);
+
 
 
 % figure(2)

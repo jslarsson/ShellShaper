@@ -1,11 +1,13 @@
 function [startValues, growthParameters, angle,...
-    eccentricity, coilingaxis, vpart, rotangle] = FindParameters(snailData,circl, theta)
+    eccentricity, coilingaxis, vpart, rotangle, bandAngles] = ...
+    FindParametersBands(snailData,circl, theta, bands)
 
 
 % Move origin to apex and rename
 apex = snailData(1,:);
 tData = snailData - apex;
 circlipse = circl(1,:) - apex;
+bandData = bands - apex;
 
 P = tData(3,:);
 Q = tData(5,:);
@@ -31,52 +33,52 @@ angle = atan(X(1)/X(2));
 Rotation = [cos(angle) -sin(angle); sin(angle) cos(angle)];
 rotData = (Rotation*tData')';
 rotStart = (Rotation*circlipse')';
+rotBands = (Rotation*bandData')';
 r0 = rotStart(1,1);
 h0 = rotStart(1,2); 
 a0 = circl(2,1); 
 startValues = [r0, h0, a0];
-eccent = circl(2,2);
+eccent = a0;%circl(2,2);
 
 if snailData(2,1)~=0
-% Radius and aperture parameter fit
-widthMeasurement = abs([(rotStart(1,1)+a0); rotData(5,1);...
-    rotData(3,1); rotData(6,1); rotData(2,1)]);
-% angle between landmarks: pi
-t = -[0; pi; 2*pi; 3*pi; 4*pi];
-
-widthFit = fit(t,widthMeasurement, 'exp1');
-widthCoeff = coeffvalues(widthFit);
-gw = widthCoeff(2);
-
-
-% Height parameters
-heightMeasurement = abs([rotStart(1,2); rotData(5,2);...
-    rotData(3,2); rotData(6,2); rotData(2,2)]);
-heightFit = fit(t,heightMeasurement,'exp1');
-coeff = coeffvalues(heightFit);
-
-gh = coeff(2);
+    % Radius and aperture parameter fit
+    widthMeasurement = abs([(rotStart(1,1)+a0); rotData(5,1);...
+        rotData(3,1); rotData(6,1); rotData(2,1)]);
+    % angle between landmarks: pi
+    t = -[0; pi; 2*pi; 3*pi; 4*pi];
+    
+    widthFit = fit(t,widthMeasurement, 'exp1');
+    widthCoeff = coeffvalues(widthFit);
+    gw = widthCoeff(2);
+    
+    
+    % Height parameters
+    heightMeasurement = abs([rotStart(1,2); rotData(5,2);...
+        rotData(3,2); rotData(6,2); rotData(2,2)]);
+    heightFit = fit(t,heightMeasurement,'exp1');
+    coeff = coeffvalues(heightFit);
+    
+    gh = coeff(2);
 else
     % Radius and aperture parameter fit
-widthMeasurement = abs([(rotStart(1,1)+a0); rotData(5,1);...
-    rotData(3,1); rotData(6,1)]);
-% angle between landmarks: pi
-t = -[0; pi; 2*pi; 3*pi];
-
-widthFit = fit(t,widthMeasurement, 'exp1');
-widthCoeff = coeffvalues(widthFit);
-gw = widthCoeff(2);
-
-
-% Height parameters
-heightMeasurement = abs([rotStart(1,2); rotData(5,2);...
-    rotData(3,2); rotData(6,2)]);
-heightFit = fit(t,heightMeasurement,'exp1');
-coeff = coeffvalues(heightFit);
-
-gh = coeff(2);
+    widthMeasurement = abs([(rotStart(1,1)+a0); rotData(5,1);...
+        rotData(3,1); rotData(6,1)]);
+    % angle between landmarks: pi
+    t = -[0; pi; 2*pi; 3*pi];
+    
+    widthFit = fit(t,widthMeasurement, 'exp1');
+    widthCoeff = coeffvalues(widthFit);
+    gw = widthCoeff(2);
+    
+    
+    % Height parameters
+    heightMeasurement = abs([rotStart(1,2); rotData(5,2);...
+        rotData(3,2); rotData(6,2)]);
+    heightFit = fit(t,heightMeasurement,'exp1');
+    coeff = coeffvalues(heightFit);
+    
+    gh = coeff(2);
 end
-
 
 growthParameters = [gw,gh];
 
@@ -118,15 +120,26 @@ sangle = 180+180/pi*atan2(vec1(2),vec1(1));
 eangle = 180+180/pi*atan2(vec2(2),vec2(1));
 vpart = [sangle, eangle]-normalAngle;
 
-thetashift = pi/2 - pi/180*apRotation;
-cX = cos(thetashift)*(xN(end))+...
-    sin(thetashift)*(xB(end));
-cY = cos(thetashift)*(yN(end))+...
-    sin(thetashift)*(yB(end));
-cZ = cos(thetashift)*(zN(end))+...
-    sin(thetashift)*(zB(end));
-cN = norm([cX,cY,cZ]);
-%     scatter3(spiral(1,end)+cX,spiral(2,end)+cY,spiral(3,end)+cZ,'k')
-cNP = norm([cX(end),0,cZ(end)]);
-c = eccent*cN/cNP;
-eccentricity = [c,apRotation];
+
+% Bands
+nBandpoints = size(rotBands,1);
+bandVectors = rotBands - rotStart(1,:);
+bandAngles = nan(nBandpoints,1);
+for i = 1:nBandpoints
+    bandAngles(i) = 180+180/pi*atan2(bandVectors(i,2),bandVectors(i,1));
+end
+
+
+
+% thetashift = pi/2 - pi/180*apRotation;
+% cX = cos(thetashift)*(xN(end))+...
+%     sin(thetashift)*(xB(end));
+% cY = cos(thetashift)*(yN(end))+...
+%     sin(thetashift)*(yB(end));
+% cZ = cos(thetashift)*(zN(end))+...
+%     sin(thetashift)*(zB(end));
+% cN = norm([cX,cY,cZ]);
+% %     scatter3(spiral(1,end)+cX,spiral(2,end)+cY,spiral(3,end)+cZ,'k')
+% cNP = norm([cX(end),0,cZ(end)]);
+c = 1;%eccent*cN/cNP;
+eccentricity = [c,0];%apRotation

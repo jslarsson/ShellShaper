@@ -11,7 +11,7 @@ startV = zeros(nSnails,3);
 eccent = zeros(nSnails,2);
 scaleF = zeros(nSnails,1);
 shellLength = zeros(nSnails,1);
-snailID = strings(nSnails,1);
+photoID = strings(nSnails,1);
 apexpoints = zeros(nSnails,2);
 bandA = zeros(nSnails,2*maxBands);
 apertureA = zeros(nSnails,2);
@@ -103,8 +103,8 @@ for snailNumber = startNumber:lastNumber
         %theta = min(E.RotationAngle,360-E.RotationAngle);
         %isneg = -sign(180-E.RotationAngle);
         [startValues, growthParameters, angle, eccentricity, X,...
-            visiblepart, rotangle, bandAngles] = FindParameters(snailData,circleData,0,bandpos);
-        
+            visiblepart, rotangle, bandAngles] = FindParametersBands(snailData,circleData,0,bandpos);
+        eccentricity(1) = 1;
         
         figure(fig2)
         set(fig2,'units','normalized','outerposition',[0.6 0.1 0.4 0.8])
