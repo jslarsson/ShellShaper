@@ -1,14 +1,5 @@
 function ShellShaperProgram(contents, saveas, saveimagefolder, startNumber, lastNumber)
 
-nSnails = numel(contents);
-growthP = zeros(nSnails,2);
-startV = zeros(nSnails,3);
-eccent = zeros(nSnails,2);
-scaleF = zeros(nSnails,1);
-shellLength = zeros(nSnails,1);
-snailID = strings(nSnails,1);
-apexpoints = zeros(nSnails,2);
-
 % We do not need to be told if the image is too big.
 warning('off', 'Images:initSize:adjustingMag');
 
@@ -73,7 +64,7 @@ for snailNumber = startNumber:lastNumber
         
         theta = min(E.RotationAngle,360-E.RotationAngle);
         isneg = -sign(180-E.RotationAngle);
-        [startValues, growthParameters, angle, eccentricity, X,...
+        [startValues, growthParameters, angle, eccent, X,...
             visiblepart, rotangle] = FindParameters(snailData,circlipse,isneg*theta);
 
         figure(fig2)
@@ -81,7 +72,7 @@ for snailNumber = startNumber:lastNumber
         clf
         shell = shellPlot(startValues(1),startValues(2),startValues(3),...
             growthParameters(1),growthParameters(2),growthParameters(1),...
-            2,eccentricity(1)/startValues(3),2,eccentricity(2),visiblepart(2)-visiblepart(1),visiblepart(1),0,5,...
+            2,eccent(1)/startValues(3),2,eccent(2),visiblepart(2)-visiblepart(1),visiblepart(1),0,5,...
             180,1,0,0,0.1);
         
         
@@ -95,14 +86,12 @@ for snailNumber = startNumber:lastNumber
         axis off
         M = max(shell.outside.ZData,[],'all');
         m = min(shell.outside.ZData,[],'all');
-        vertmove = max(abs(shell.outside.YData),[],'all')*1.2*scale;
-        shellL = abs(m-M);
+        shellLength = abs(m-M);
         
         figure(fig1)
         hold on
         delete(model)
-        model = plotOnImage(shell.outside, fig1, apex, ...
-            -angle, scale,rotangle,vertmove, [0.6 0.2 0.7]);
+        model = plotOnImage(shell.outside, fig1, apex, -angle, scale,rotangle);
         
         
         input = questdlg('Is this good enough?', ...
@@ -134,13 +123,29 @@ for snailNumber = startNumber:lastNumber
         end
     end
     
-    growthP(snailNumber,:) = growthParameters;
-    startV(snailNumber,:) = startValues;
-    eccent(snailNumber,:) = eccentricity;
-    scaleF(snailNumber) = scale;
-    shellLength(snailNumber) = shellL;
-    snailID(snailNumber) = string(snailname);
-    apexpoints(snailNumber,:) = apex;
+    % Saves a table with the result to a file
+    gw = growthParameters(1);
+    gh = growthParameters(2);
+    r0 = startValues(1);
+    z0 = startValues(2);
+    a0 = startValues(3);
+    scaleFactor = scale;
+    eccentricity = eccent(1);
+    apAngle = eccent(2);
+    snailID = string(snailname);
+    apex_x = apex(1);
+    apex_y = apex(2);
+    newSnail = table(snailID, gw, gh, r0,z0,a0,...
+        eccentricity, apAngle, shellLength, apex_x, apex_y, scaleFactor);
+    if exist(saveas, 'file')
+        writetable(newSnail,saveas,'WriteMode','Append',...
+        'WriteVariableNames',false,'WriteRowNames',true)
+    else
+        writetable(newSnail,saveas,'WriteMode','Append',...
+        'WriteVariableNames',true,'WriteRowNames',true)
+    end
+    
+    
     
     disp(['Done with number: ',num2str(snailNumber)])
     disp(['Photo: ',filename])
@@ -148,19 +153,6 @@ for snailNumber = startNumber:lastNumber
     toc
 end
 
-%% Saves a table with the result to a txt-file, or csv.
 
-gw = growthP(:,1);
-gh = growthP(:,2);
-r0 = startV(:,1);
-z0 = startV(:,2);
-a0 = startV(:,3);
-scaleFactor = scaleF;
-eccentricity = eccent(:,1);
-apAngle = eccent(:,2);
-apex = apexpoints;
-results = table(snailID, gw, gh, r0,z0,a0,...
-    eccentricity, apAngle, shellLength, apex, scaleFactor);
-writetable(results,saveas)
 
 
