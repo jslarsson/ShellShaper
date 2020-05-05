@@ -5,7 +5,7 @@ addpath .\ShellModelFunctions
 % Use all .jpg and .jpeg files in the photo folder
 contents = dir('ShellsToShape\*.jp*g');
 
-% Save in the following table (.txt or .csv) and folder
+% Save in the following table (.txt or .csv or .xlsx) and folder
 % The table will be appended
 saveas = '.\ShapedShells\parameters.csv';
 saveimagefolder = '.\ShapedShells';
