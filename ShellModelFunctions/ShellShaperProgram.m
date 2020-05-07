@@ -1,5 +1,6 @@
 function ShellShaperProgram(contents, saveas, saveimagefolder, startNumber, lastNumber)
 
+
 % We do not need to be told if the image is too big.
 warning('off', 'Images:initSize:adjustingMag');
 
@@ -86,12 +87,14 @@ for snailNumber = startNumber:lastNumber
         axis off
         M = max(shell.outside.ZData,[],'all');
         m = min(shell.outside.ZData,[],'all');
+        vertmove = max(abs(shell.outside.YData),[],'all')*1.2*scale;
         shellLength = abs(m-M);
         
         figure(fig1)
         hold on
         delete(model)
-        model = plotOnImage(shell.outside, fig1, apex, -angle, scale,rotangle);
+        model = plotOnImage(shell.outside, fig1, apex, ...
+            -angle, scale,rotangle,vertmove, [0.6 0.2 0.7]);
         
         
         input = questdlg('Is this good enough?', ...
@@ -123,6 +126,7 @@ for snailNumber = startNumber:lastNumber
         end
     end
     
+  
     % Saves a table with the result to a file
     gw = growthParameters(1);
     gh = growthParameters(2);
@@ -137,6 +141,7 @@ for snailNumber = startNumber:lastNumber
     apex_y = apex(2);
     newSnail = table(snailID, gw, gh, r0,z0,a0,...
         eccentricity, apAngle, shellLength, apex_x, apex_y, scaleFactor);
+    
     if exist(saveas, 'file')
         writetable(newSnail,saveas,'WriteMode','Append',...
         'WriteVariableNames',false,'WriteRowNames',true)
@@ -144,15 +149,12 @@ for snailNumber = startNumber:lastNumber
         writetable(newSnail,saveas,'WriteMode','Append',...
         'WriteVariableNames',true,'WriteRowNames',true)
     end
-    
-    
-    
+
+
     disp(['Done with number: ',num2str(snailNumber)])
     disp(['Photo: ',filename])
     disp(' ')
     toc
 end
-
-
 
 
