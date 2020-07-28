@@ -1,4 +1,4 @@
-function ShellShaperBandsProgram(contents, saveas, saveimagefolder, startNumber, lastNumber)
+function ShellShaperBandsProgram(contents, saveas, saveimagefolder, startNumber, lastNumber, showspiral, colours)
 
 input = inputdlg('Maximum number of bands?', ...
     'Input',[1,30]);
@@ -27,8 +27,10 @@ for snailNumber = startNumber:lastNumber
     snailimage = imread(filename);
     snailname = filename(1:end-4);
     
+    clear fig1
     % Does the following until good shape is obtained
     fig1 = figure(1);
+    
     set(fig1,'units','normalized','outerposition',[0.1 0.1 0.9 0.9])
     
     hold on
@@ -113,13 +115,13 @@ for snailNumber = startNumber:lastNumber
         shell = shellPlot(startValues(1),startValues(2),startValues(3),...
             growthParameters(1),growthParameters(2),growthParameters(1),...
             2,eccentricity(1),2,eccentricity(2),visiblepart(2)-visiblepart(1),visiblepart(1),0,5,...
-            180,1,0,0,0); %OutsideFF
+            180,showspiral,0,0,0,colours); %OutsideFF
         camlight(-70,30)
         camlight(70,-30)
         view(-180/pi*rotangle,0)
         lighting phong
-        material([0.3 0.7 0.1])
-        alpha(0.5)
+        material([0.4 0.6 0.1])
+        alpha 1
         axis equal
         axis off
         M = max(shell.outside.ZData,[],'all');
@@ -131,17 +133,17 @@ for snailNumber = startNumber:lastNumber
             banding(indx(j)) = shellPlot(startValues(1),startValues(2),startValues(3),...
             growthParameters(1),growthParameters(2),growthParameters(1),...
             2,eccentricity(1),2,eccentricity(2),bandAngles(2*indx(j))-bandAngles(2*indx(j)-1),bandAngles(2*indx(j)-1),0,5,...
-            180,1,0,1,0);
+            180,0,0,1,0,colours);
             % shellPlotOutsideFF
         end
         camlight(-70,30)
         camlight(70,-30)
         view(-180/pi*rotangle,0)
         lighting phong
-        material([0.3 0.7 0.1])
+        material([0.4 0.6 0.1])
         axis equal
         axis off
-
+        alpha 1
         
         figure(fig1)
         hold on

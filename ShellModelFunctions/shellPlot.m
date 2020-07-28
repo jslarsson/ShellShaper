@@ -1,7 +1,7 @@
 function shell = shellPlot(startRadius,startHeight,startAperture,...
     radiusGrowthFactor,heightGrowthFactor,apertureGrowthFactor,...
     a,b,c,theta,amount,phi,tStart,tEnd,...
-    nGridpoints,skeletonPlot,aperturePlot,nBands,thickness)
+    nGridpoints,skeletonPlot,aperturePlot,nBands,thickness,colours)
 % Plots a shell with inserted parameters.
 
 
@@ -71,9 +71,11 @@ apShape = circlipseF(a,b,c,s,theta);
 % 
 %     plot3(B1,B2,B3,'g','LineWidth',2)
 
-
-shellcolor = [0.7,0.7,0.7];
-
+if strcmp(colours,'cepaea')
+    shellcolor = [0.5, 0.3, 0];
+else
+    shellcolor = [0.7,0.7,0.7];
+end
 if thickness ~= 0
     % Generating start and end annulus
     diskX = o1(1)+apShape'.*cos(s)'*ex1(1).*start+...
@@ -122,6 +124,7 @@ for i=1:2
         outsideY = Y;
         outsideZ = Z;
         shell.outside = surf(outsideX,outsideY,outsideZ,'FaceColor',shellcolor,'EdgeColor','none');
+        hold on
         if aperturePlot
             hold on
             green = [0, 0.75, 0.2];
@@ -133,7 +136,7 @@ for i=1:2
             [~,maxwidth] = max(X(widthPos,end));
             widthPoint = [X(widthPos(maxwidth),end),Y(widthPos(maxwidth),end),Z(widthPos(maxwidth),end)];
         end
-    elseif thickness ~= ismember(0,0.99)
+    elseif ~ismember(thickness,[0,1])
         insideX = X;
         insideY = Y;
         insideZ = Z;

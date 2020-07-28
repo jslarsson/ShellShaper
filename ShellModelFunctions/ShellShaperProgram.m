@@ -1,4 +1,4 @@
-function ShellShaperProgram(contents, saveas, saveimagefolder, startNumber, lastNumber)
+function ShellShaperProgram(contents, saveas, saveimagefolder, startNumber, lastNumber, showspiral)
 
 
 % We do not need to be told if the image is too big.
@@ -74,7 +74,7 @@ for snailNumber = startNumber:lastNumber
         shell = shellPlot(startValues(1),startValues(2),startValues(3),...
             growthParameters(1),growthParameters(2),growthParameters(1),...
             2,eccent(1)/startValues(3),2,eccent(2),visiblepart(2)-visiblepart(1),visiblepart(1),0,5,...
-            180,1,0,0,0.1);
+            180,showspiral,0,0,0.1,'gray');
         
         
         camlight(-70,30)
