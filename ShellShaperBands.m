@@ -1,20 +1,24 @@
-% Path to folders containing photos and functions
+% Path to folder containing photos and functions
 addpath .\ShellsToShape
 addpath .\ShellModelFunctions
 
-% Use all .jpg and .jpeg files in the photo folder 
+% Use all .jpg and .jpeg files in the photo folder
 contents = dir('ShellsToShape\*.jp*g');
-nSnails = numel(contents);
 
-% Save in the following table and existing folder
-saveas = '.\ShapedShells\parameters.csv';
+% Save in the following table and folder
+saveas = '.\ShapedShells\parameters.txt';
 saveimagefolder = '.\ShapedShells';
 
-% Loop through shell images, from startNumber to lastNumber,
-% change to lastNumber = nSnails to do all.
+
+% Go through these shell images.
 startNumber = 1;
-lastNumber = 4; %nSnails;
+lastNumber = numel(contents);
 
-% Run the program
-ShellShaperBandsProgram(contents, saveas, saveimagefolder, startNumber, lastNumber)
+% Show internal growth spiral? 1/0
+showspiral = 0;
 
+% Colour scheme. 'cepaea' available, anything else will give gray scale.
+colours = 'cepaea';
+
+% Run program
+ShellShaperBandsProgram(contents, saveas, saveimagefolder, startNumber, lastNumber, showspiral, colours)
