@@ -21,7 +21,7 @@ modelbands = [];
 % We do not need to be told if the image is too big.
 warning('off', 'Images:initSize:adjustingMag');
 
-tic
+%tic
 for snailNumber = startNumber:lastNumber
     filename = contents(snailNumber).name;
     snailimage = imread(filename);
@@ -191,49 +191,47 @@ for snailNumber = startNumber:lastNumber
         end
     end
     
-    growthP(snailNumber,:) = growthParameters;
-    startV(snailNumber,:) = startValues;
-    eccent(snailNumber,:) = eccentricity;
-    scaleF(snailNumber) = scale;
-    shellLength(snailNumber) = shellL;
-    photoID(snailNumber) = string(snailname);
-    apexpoints(snailNumber,:) = apex;
-    bandA(snailNumber,:) = bandAngles;
-    apertureA(snailNumber,:) = visiblepart;
     
+    % Saves a table with the result to a file
+    gw = growthParameters(1);
+    gh = growthParameters(2);
+    r0 = startValues(1);
+    z0 = startValues(2);
+    a0 = startValues(3);
+    scaleFactor = scale;
+    eccentricity = eccent(1);
+    apAngle = eccent(2);
+    snailID = string(snailname);
+    apex_x = apex(1);
+    apex_y = apex(2);
+    bandA = bandAngles';
+    
+    newSnail = table(snailID, gw, gh, r0,z0,a0,...
+        eccentricity, apAngle, bandA, shellL, apex_x, apex_y, scaleFactor);
+    
+    newSnail = splitvars(newSnail,'bandA');
+    for i = 1:maxBands
+        newSnail.Properties.VariableNames{6+2*i-1} = char(strcat('band',string(i),'start'));
+        newSnail.Properties.VariableNames{6+2*i} = char(strcat('band',string(i),'end'));
+    end
+
+    % Create or append output file
+    if exist(saveas, 'file')
+        writetable(newSnail,saveas,'WriteMode','Append',...
+        'WriteVariableNames',false,'WriteRowNames',true)
+    else
+        writetable(newSnail,saveas,'WriteMode','Append',...
+        'WriteVariableNames',true,'WriteRowNames',true)
+    end
+        
+
     model = [];
     modelbands = [];
-    
+
     disp(['Done with number: ',num2str(snailNumber)])
     disp(['Photo: ',filename])
     disp(' ')
-    toc
+    %toc
 end
 
-%% Saves a table with the result to a txt-file, or csv.
-
-widthGrowth = growthP(:,1);
-heightGrowth = growthP(:,2);
-aperturePositionRadial = startV(:,1);
-aperturePositionHeight = startV(:,2);
-apertureSize = startV(:,3);
-scaleFactor = scaleF;
-apertureSuture = apertureA(:,1);
-apertureColumnella = apertureA(:,2);
-%eccentricity = eccent(:,1);
-%apAngle = eccent(:,2);
-apexPos = apexpoints;
-%%
-
-results = table(photoID, widthGrowth, heightGrowth, aperturePositionRadial,...
-    aperturePositionHeight,apertureSize,bandA,apertureSuture,apertureColumnella,...
-    shellLength, apexPos, scaleFactor);
-results = splitvars(results,'bandA');
-
-for i = 1:maxBands
-    results.Properties.VariableNames{6+2*i-1} = char(strcat('band',string(i),'start'));
-    results.Properties.VariableNames{6+2*i} = char(strcat('band',string(i),'end'));
-end
-%%
-
-writetable(results,saveas)
+disp('Done!')
