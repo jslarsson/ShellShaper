@@ -27,6 +27,7 @@ coilingaxis = X + apex;
 % Rotation angle
 angle = atan(X(1)/X(2));
 
+
 % Landmark coordinates get rotated
 Rotation = [cos(angle) -sin(angle); sin(angle) cos(angle)];
 rotData = (Rotation*tData')';
@@ -110,7 +111,8 @@ zB = zPart(unitBinormal(spiral));
 % The angle in degrees between the rotated curve's unit normal and the
 % x-axis
 normalAngle = sign(zN(end))*180/pi*acos(norm(xN(end))/norm([xN(end),yN(end),zN(end)]));
-apRotation = theta - normalAngle;
+apRotation = theta + 180/pi*angle - normalAngle;
+
 
 vec1 = rotData(7,:)-rotStart(1,:);
 vec2 = rotData(8,:)-rotStart(1,:);
