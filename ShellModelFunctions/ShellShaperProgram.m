@@ -20,25 +20,25 @@ for snailNumber = startNumber:lastNumber
     hold on
     imshow(snailimage)
     
-    L1 = drawpoint('Label','Apex');
+    L1 = drawpoint('Label','A');
     pause
-    L2 = drawpoint('Label','Right1');
+    L2 = drawpoint('Label','R1');
     pause
-    L3 = drawpoint('Label','Right2');
+    L3 = drawpoint('Label','R2');
     pause
-    L5 = drawpoint('Label','ExtremeRight');
+    L5 = drawpoint('Label','R3');
     pause
-    L13 = drawpoint('Label','Left');
+    L13 = drawpoint('Label','L1');
     pause
-    L12 = drawpoint('Label','ExtremeLeft');
+    L12 = drawpoint('Label','L2');
     pause
-    C1 = drawcircle('Label','Circle');
+    C1 = drawcircle('Label','C');
     pause
-    E = drawellipse('Center',C1.Center,'Label','Ellipse','SemiAxes',[C1.Radius,1.5*C1.Radius]);
+    E = drawellipse('Center',C1.Center,'Label','E','SemiAxes',[C1.Radius,1.5*C1.Radius]);
     pause
-    L7 = drawpoint('Label','EndSuture');
+    L7 = drawpoint('Label','EndS');
     pause
-    L8 = drawpoint('Label','EndColumnella');
+    L8 = drawpoint('Label','EndC');
     pause
     
     
@@ -61,12 +61,13 @@ for snailNumber = startNumber:lastNumber
         snailData = [L1.Position; L2.Position; L3.Position; L5.Position; ...
             L12.Position; L13.Position; L7.Position; L8.Position]./scale;
         circlipse = [C1.Center; C1.Radius, E.SemiAxes(2)]./scale;
-
+disp(360-E.RotationAngle)
         
         theta = min(E.RotationAngle,360-E.RotationAngle);
         isneg = -sign(180-E.RotationAngle);
         [startValues, growthParameters, angle, eccent, X,...
             visiblepart, rotangle] = FindParameters(snailData,circlipse,isneg*theta);
+    disp(eccent)
 
         figure(fig2)
         set(fig2,'units','normalized','outerposition',[0.6 0.1 0.4 0.8])
@@ -131,16 +132,16 @@ for snailNumber = startNumber:lastNumber
     gw = growthParameters(1);
     gh = growthParameters(2);
     r0 = startValues(1);
-    z0 = startValues(2);
+    h0 = startValues(2);
     a0 = startValues(3);
     scaleFactor = scale;
-    eccentricity = eccent(1);
+    c0 = eccent(1);
     apAngle = eccent(2);
     snailID = string(snailname);
     apex_x = apex(1);
     apex_y = apex(2);
-    newSnail = table(snailID, gw, gh, r0,z0,a0,...
-        eccentricity, apAngle, shellLength, apex_x, apex_y, scaleFactor);
+    newSnail = table(snailID, gw, gh, r0,h0,a0,...
+        c0, apAngle, shellLength, apex_x, apex_y, scaleFactor);
     
     if exist(saveas, 'file')
         writetable(newSnail,saveas,'WriteMode','Append',...
