@@ -61,13 +61,13 @@ for snailNumber = startNumber:lastNumber
         snailData = [L1.Position; L2.Position; L3.Position; L5.Position; ...
             L12.Position; L13.Position; L7.Position; L8.Position]./scale;
         circlipse = [C1.Center; C1.Radius, E.SemiAxes(2)]./scale;
-disp(360-E.RotationAngle)
+
         
         theta = min(E.RotationAngle,360-E.RotationAngle);
         isneg = -sign(180-E.RotationAngle);
         [startValues, growthParameters, angle, eccent, X,...
             visiblepart, rotangle] = FindParameters(snailData,circlipse,isneg*theta);
-    disp(eccent)
+    
 
         figure(fig2)
         set(fig2,'units','normalized','outerposition',[0.6 0.1 0.4 0.8])
